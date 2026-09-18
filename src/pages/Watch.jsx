@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getVideoById } from "../api/video.api";
-import { toggleVideoLike } from "../api/like.api";
+import { toggleVideoLike, toggleCommentLike } from "../api/like.api";
 import { toggleSubscription } from "../api/subscription.api";
 import { getUserPlaylists, addVideoToPlaylist } from "../api/playlist.api";
 import {
@@ -104,6 +104,33 @@ function Watch() {
     } catch (error) {
       console.log("LIKE ERROR:", error);
       console.log("LIKE ERROR RESPONSE:", error.response?.data);
+    }
+  };
+
+  const handleCommentLike = async (commentId) => {
+    try {
+      const response = await toggleCommentLike(commentId);
+
+      console.log("COMMENT LIKE RESPONSE:", response.data);
+
+      const liked = response.data.data.isLiked;
+
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment._id === commentId
+            ? {
+                ...comment,
+                isLiked: liked,
+                likesCount: liked
+                  ? comment.likesCount + 1
+                  : comment.likesCount - 1,
+              }
+            : comment,
+        ),
+      );
+    } catch (error) {
+      console.log("COMMENT LIKE ERROR:", error);
+      console.log("COMMENT LIKE ERROR RESPONSE:", error.response?.data);
     }
   };
 
@@ -313,6 +340,12 @@ function Watch() {
             </p>
 
             <p>{comment.content}</p>
+
+            <button onClick={() => handleCommentLike(comment._id)}>
+              {comment.isLiked ? "Unlike" : "Like"}
+            </button>
+
+            <span>{comment.likesCount} likes</span>
 
             {comment.owner?._id?.toString() === user?._id?.toString() && (
               <>
