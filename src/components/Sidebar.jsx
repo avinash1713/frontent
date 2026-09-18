@@ -74,6 +74,7 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Sidebar = ({ isOpen, onClose }) => {
+  console.log("SIDEBAR USER:", user);
   const { user } = useAuth();
 
   const navItems = [

@@ -46,9 +46,9 @@ function AppRoutes() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/watch/:videoId" element={<Watch />} />
-            <Route path="/channel/:username" element={<Channel />} />
 
             <Route element={<ProtectedRoute />}>
+              <Route path="/channel/:username" element={<Channel />} />
               <Route path="/history" element={<History />} />
               <Route path="/liked-videos" element={<LikedVideos />} />
               <Route path="/playlists" element={<Playlists />} />
