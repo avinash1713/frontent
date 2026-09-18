@@ -197,6 +197,25 @@ function Watch() {
     }
   };
 
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm("Are you sure you want to delete this comment?")) {
+      return;
+    }
+
+    try {
+      const response = await deleteComment(commentId);
+
+      console.log("DELETE COMMENT RESPONSE:", response.data);
+
+      setComments((prev) =>
+        prev.filter((comment) => comment._id !== commentId),
+      );
+    } catch (error) {
+      console.log("DELETE COMMENT ERROR:", error);
+      console.log("DELETE COMMENT ERROR RESPONSE:", error.response?.data);
+    }
+  };
+
   if (loading) {
     return <p>Loading video...</p>;
   }
@@ -296,7 +315,13 @@ function Watch() {
             <p>{comment.content}</p>
 
             {comment.owner?._id?.toString() === user?._id?.toString() && (
-              <button onClick={() => handleEditComment(comment)}>Edit</button>
+              <>
+                <button onClick={() => handleEditComment(comment)}>Edit</button>
+
+                <button onClick={() => handleDeleteComment(comment._id)}>
+                  Delete
+                </button>
+              </>
             )}
           </div>
         ))}
