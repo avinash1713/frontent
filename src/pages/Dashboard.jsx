@@ -3,6 +3,7 @@ import {
   publishVideo,
   getAllVideos,
   updateVideo,
+  deleteVideo,
   togglePublishStatus,
 } from "../api/video.api";
 import { useAuth } from "../context/AuthContext";
@@ -139,6 +140,23 @@ function Dashboard() {
     }
   };
 
+  const handleDelete = async (videoId) => {
+    if (!window.confirm("Are you sure you want to delete this video?")) {
+      return;
+    }
+
+    try {
+      const response = await deleteVideo(videoId);
+
+      console.log("DELETE VIDEO RESPONSE:", response.data);
+
+      setVideos((prev) => prev.filter((video) => video._id !== videoId));
+    } catch (error) {
+      console.log("DELETE VIDEO ERROR:", error);
+      console.log("DELETE VIDEO ERROR RESPONSE:", error.response?.data);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -153,6 +171,8 @@ function Dashboard() {
       const response = await publishVideo(data);
 
       console.log("PUBLISH VIDEO RESPONSE:", response.data);
+
+      setVideos((prev) => [response.data.data, ...prev]);
 
       alert("Video published successfully");
 
@@ -251,6 +271,10 @@ function Dashboard() {
 
               <button type="button" onClick={() => handleEdit(video)}>
                 Edit
+              </button>
+
+              <button type="button" onClick={() => handleDelete(video._id)}>
+                Delete
               </button>
 
               {editingVideo?._id === video._id && (
