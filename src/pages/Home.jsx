@@ -13,10 +13,20 @@ const Home = () => {
   const [sortBy, setSortBy] = useState("");
   const [sortType, setSortType] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [hasPrevPage, setHasPrevPage] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchVideos = async (query = "", sort = "", type = "") => {
+  const fetchVideos = async (
+    query = "",
+    sort = "",
+    type = "",
+    currentPage = 1,
+  ) => {
     try {
       setLoading(true);
       setError("");
@@ -25,12 +35,19 @@ const Home = () => {
         query,
         sortBy: sort,
         sortType: type,
+        page: currentPage,
+        limit: 2,
       });
 
       console.log("VIDEOS RESPONSE:", response.data);
       console.log("VIDEOS DATA:", response.data.data);
 
-      setVideos(response.data.data.docs);
+      const data = response.data.data;
+
+      setVideos(data.docs);
+      setTotalPages(data.totalPages);
+      setHasNextPage(data.hasNextPage);
+      setHasPrevPage(data.hasPrevPage);
     } catch (error) {
       console.log("VIDEOS ERROR:", error);
       console.log("VIDEOS ERROR RESPONSE:", error.response?.data);
@@ -42,17 +59,20 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchVideos(search, sortBy, sortType);
-  }, [search, sortBy, sortType]);
+    fetchVideos(search, sortBy, sortType, page);
+  }, [search, sortBy, sortType, page]);
 
   const handleSearch = (e) => {
     e.preventDefault();
 
+    setPage(1);
     setSearch(searchInput);
   };
 
   const handleSortChange = (e) => {
     const value = e.target.value;
+
+    setPage(1);
 
     if (value === "") {
       setSortBy("");
@@ -73,6 +93,18 @@ const Home = () => {
     if (value === "longest") {
       setSortBy("duration");
       setSortType("desc");
+    }
+  };
+
+  const handlePrevious = () => {
+    if (hasPrevPage) {
+      setPage((currentPage) => currentPage - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (hasNextPage) {
+      setPage((currentPage) => currentPage + 1);
     }
   };
 
@@ -118,20 +150,41 @@ const Home = () => {
       {error && <p>{error}</p>}
 
       {!loading && !error && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-            gap: "20px",
-          }}
-        >
-          {videos.map((video) => (
-            <VideoCard key={video._id} video={video} />
-          ))}
-        </div>
-      )}
+        <>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+              gap: "20px",
+            }}
+          >
+            {videos.map((video) => (
+              <VideoCard key={video._id} video={video} />
+            ))}
+          </div>
 
-      {!loading && !error && videos.length === 0 && <p>No videos found.</p>}
+          {videos.length === 0 && <p>No videos found.</p>}
+
+          <div>
+            <button
+              type="button"
+              onClick={handlePrevious}
+              disabled={!hasPrevPage}
+            >
+              Previous
+            </button>
+
+            <span>
+              {" "}
+              Page {page} of {totalPages}{" "}
+            </span>
+
+            <button type="button" onClick={handleNext} disabled={!hasNextPage}>
+              Next
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
