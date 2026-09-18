@@ -1,6 +1,9 @@
+// src/routes/AppRoutes.jsx
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 import ProtectedRoute from "./ProtectedRoute";
 
 import Home from "../pages/Home.jsx";
@@ -12,8 +15,8 @@ import History from "../pages/History.jsx";
 import LikedVideos from "../pages/LikedVideos.jsx";
 
 import Dashboard from "../pages/Dashboard.jsx";
-import Playlists from "../pages/PlayLists.jsx";
-import Playlist from "../pages/PlayList.jsx";
+import Playlists from "../pages/Playlists.jsx";
+import Playlist from "../pages/Playlist.jsx";
 
 import Settings from "../pages/Settings";
 
@@ -22,32 +25,30 @@ function AppRoutes() {
     <BrowserRouter>
       <Navbar />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
+      <Sidebar />
 
-        <Route path="/login" element={<Login />} />
+      <main className="ml-64 min-h-screen bg-black pt-16 text-white">
+        <div className="p-6">
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/watch/:videoId" element={<Watch />} />
+            <Route path="/channel/:username" element={<Channel />} />
 
-        <Route path="/register" element={<Register />} />
-
-        <Route path="/watch/:videoId" element={<Watch />} />
-
-        <Route path="/channel/:username" element={<Channel />} />
-
-        {/* Protected Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/history" element={<History />} />
-
-          <Route path="/liked-videos" element={<LikedVideos />} />
-
-          <Route path="/playlists" element={<Playlists />} />
-
-          <Route path="/playlist/:playlistId" element={<Playlist />} />
-
-          <Route path="/dashboard" element={<Dashboard />} />
-
-          <Route path="/settings" element={<Settings />} />
-        </Route>
-      </Routes>
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/history" element={<History />} />
+              <Route path="/liked-videos" element={<LikedVideos />} />
+              <Route path="/playlists" element={<Playlists />} />
+              <Route path="/playlist/:playlistId" element={<Playlist />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+          </Routes>
+        </div>
+      </main>
     </BrowserRouter>
   );
 }

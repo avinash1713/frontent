@@ -109,22 +109,35 @@ const Home = () => {
   };
 
   return (
-    <div>
-      <h1>Home</h1>
+    <div className="min-h-screen">
+      {/* Page Heading */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white">Home</h1>
 
-      <form onSubmit={handleSearch}>
+        <div className="mt-2 h-1 w-12 rounded-full bg-[#39FF14] shadow-[0_0_10px_#39FF14]" />
+      </div>
+
+      {/* Search */}
+      <form onSubmit={handleSearch} className="flex w-full max-w-3xl gap-3">
         <input
           type="text"
           placeholder="Search videos..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
+          className="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 outline-none transition focus:border-[#39FF14] focus:ring-1 focus:ring-[#39FF14]"
         />
 
-        <button type="submit">Search</button>
+        <button
+          type="submit"
+          className="rounded-lg bg-[#39FF14] px-6 py-3 font-semibold text-black transition hover:bg-[#6AFF4A] hover:shadow-[0_0_12px_#39FF14]"
+        >
+          Search
+        </button>
       </form>
 
-      <div>
-        <label>Sort by: </label>
+      {/* Sort */}
+      <div className="mt-5 flex items-center gap-3">
+        <label className="text-sm font-medium text-gray-400">Sort by:</label>
 
         <select
           value={
@@ -137,6 +150,7 @@ const Home = () => {
                   : ""
           }
           onChange={handleSortChange}
+          className="rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 text-sm text-white outline-none transition focus:border-[#39FF14] focus:ring-1 focus:ring-[#39FF14]"
         >
           <option value="">Default</option>
           <option value="newest">Newest</option>
@@ -145,41 +159,58 @@ const Home = () => {
         </select>
       </div>
 
-      {loading && <p>Loading videos...</p>}
+      {/* Loading */}
+      {loading && (
+        <div className="mt-10 flex justify-center">
+          <p className="text-gray-400">Loading videos...</p>
+        </div>
+      )}
 
-      {error && <p>{error}</p>}
+      {/* Error */}
+      {error && (
+        <div className="mt-10 rounded-lg border border-red-900 bg-red-950/30 p-4">
+          <p className="text-red-400">{error}</p>
+        </div>
+      )}
 
       {!loading && !error && (
         <>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-              gap: "20px",
-            }}
-          >
+          {/* Video Grid */}
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {videos.map((video) => (
               <VideoCard key={video._id} video={video} />
             ))}
           </div>
 
-          {videos.length === 0 && <p>No videos found.</p>}
+          {/* No Videos */}
+          {videos.length === 0 && (
+            <div className="mt-16 text-center">
+              <p className="text-lg text-gray-400">No videos found.</p>
+            </div>
+          )}
 
-          <div>
+          {/* Pagination */}
+          <div className="mt-10 flex items-center justify-center gap-5">
             <button
               type="button"
               onClick={handlePrevious}
               disabled={!hasPrevPage}
+              className="rounded-lg border border-gray-700 bg-gray-900 px-5 py-2 text-sm font-medium text-gray-300 transition hover:border-[#39FF14] hover:text-[#39FF14] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-700 disabled:hover:text-gray-300"
             >
               Previous
             </button>
 
-            <span>
-              {" "}
-              Page {page} of {totalPages}{" "}
+            <span className="text-sm text-gray-400">
+              Page <span className="font-semibold text-[#39FF14]">{page}</span>{" "}
+              of {totalPages}
             </span>
 
-            <button type="button" onClick={handleNext} disabled={!hasNextPage}>
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={!hasNextPage}
+              className="rounded-lg border border-gray-700 bg-gray-900 px-5 py-2 text-sm font-medium text-gray-300 transition hover:border-[#39FF14] hover:text-[#39FF14] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-700 disabled:hover:text-gray-300"
+            >
               Next
             </button>
           </div>
