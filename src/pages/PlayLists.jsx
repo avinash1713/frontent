@@ -5,6 +5,7 @@ import {
   createPlaylist,
   getUserPlaylists,
   updatePlaylist,
+  deletePlaylist,
 } from "../api/playlist.api";
 
 function Playlists() {
@@ -89,6 +90,24 @@ function Playlists() {
     } catch (error) {
       console.log("UPDATE PLAYLIST ERROR:", error);
       console.log("UPDATE PLAYLIST ERROR RESPONSE:", error.response?.data);
+    }
+  };
+
+  const handleDelete = async (playlistId) => {
+    if (!window.confirm("Are you sure you want to delete this playlist?")) {
+      return;
+    }
+    try {
+      const response = await deletePlaylist(playlistId);
+
+      console.log("DELETE PLAYLIST RESPONSE:", response.data);
+
+      setPlaylists((prev) =>
+        prev.filter((playlist) => playlist._id !== playlistId),
+      );
+    } catch (error) {
+      console.log("DELETE PLAYLIST ERROR:", error);
+      console.log("DELETE PLAYLIST ERROR RESPONSE:", error.response?.data);
     }
   };
 
@@ -186,7 +205,10 @@ function Playlists() {
             <p>{playlist.totalVideos} videos</p>
 
             <p>{playlist.totalViews} views</p>
+
             <button onClick={() => handleEdit(playlist)}>Edit</button>
+
+            <button onClick={() => handleDelete(playlist._id)}>Delete</button>
           </div>
         ))}
       </div>
