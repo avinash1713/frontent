@@ -1,7 +1,12 @@
+// src/pages/Subscriptions.jsx
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getSubscribedChannels } from "../api/subscription.api";
+import {
+  getSubscribedChannels,
+  toggleSubscription,
+} from "../api/subscription.api";
 
 function Subscriptions() {
   const { user } = useAuth();
@@ -33,6 +38,23 @@ function Subscriptions() {
       fetchSubscriptions();
     }
   }, [user]);
+
+  const handleUnsubscribe = async (channelId) => {
+    try {
+      const response = await toggleSubscription(channelId);
+
+      console.log("UNSUBSCRIBE RESPONSE:", response.data);
+
+      if (response.data.data.subscribed === false) {
+        setSubscriptions((prev) =>
+          prev.filter((item) => item.subscribedChannel._id !== channelId),
+        );
+      }
+    } catch (error) {
+      console.log("UNSUBSCRIBE ERROR:", error);
+      console.log("UNSUBSCRIBE ERROR RESPONSE:", error.response?.data);
+    }
+  };
 
   if (loading) {
     return (
@@ -93,37 +115,48 @@ function Subscriptions() {
                 className="overflow-hidden rounded-xl border border-gray-800 bg-gray-950 transition hover:border-green-900"
               >
                 <div className="flex flex-col gap-5 p-5 md:flex-row">
-                  {/* Channel */}
-                  <Link
-                    to={`/channel/${channel.username}`}
-                    className="flex shrink-0 items-center gap-4 md:w-64"
-                  >
-                    <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-gray-800 bg-gray-900">
-                      {channel.avatar?.url ? (
-                        <img
-                          src={channel.avatar.url}
-                          alt={channel.username}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-xl font-bold text-[#39FF14]">
-                          {channel.username?.charAt(0)?.toUpperCase()}
-                        </div>
-                      )}
-                    </div>
+                  {/* ================= CHANNEL ================= */}
+                  <div className="flex shrink-0 flex-col gap-4 md:w-64">
+                    <Link
+                      to={`/channel/${channel.username}`}
+                      className="flex items-center gap-4"
+                    >
+                      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-gray-800 bg-gray-900">
+                        {channel.avatar?.url ? (
+                          <img
+                            src={channel.avatar.url}
+                            alt={channel.username}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-xl font-bold text-[#39FF14]">
+                            {channel.username?.charAt(0)?.toUpperCase()}
+                          </div>
+                        )}
+                      </div>
 
-                    <div className="min-w-0">
-                      <h3 className="truncate text-base font-semibold text-white transition hover:text-[#39FF14]">
-                        {channel.fullName}
-                      </h3>
+                      <div className="min-w-0">
+                        <h3 className="truncate text-base font-semibold text-white transition hover:text-[#39FF14]">
+                          {channel.fullName}
+                        </h3>
 
-                      <p className="mt-1 truncate text-sm text-gray-500">
-                        @{channel.username}
-                      </p>
-                    </div>
-                  </Link>
+                        <p className="mt-1 truncate text-sm text-gray-500">
+                          @{channel.username}
+                        </p>
+                      </div>
+                    </Link>
 
-                  {/* Latest Video */}
+                    {/* ================= UNSUBSCRIBE ================= */}
+                    <button
+                      type="button"
+                      onClick={() => handleUnsubscribe(channel._id)}
+                      className="w-full rounded-lg bg-gray-800 px-4 py-2 text-sm font-medium text-gray-300 transition hover:bg-red-950 hover:text-red-400 sm:w-fit"
+                    >
+                      Unsubscribe
+                    </button>
+                  </div>
+
+                  {/* ================= LATEST VIDEO ================= */}
                   {latestVideo ? (
                     <Link
                       to={`/watch/${latestVideo._id}`}
