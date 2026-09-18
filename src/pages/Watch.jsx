@@ -4,6 +4,12 @@ import { getVideoById } from "../api/video.api";
 import { toggleVideoLike } from "../api/like.api";
 import { toggleSubscription } from "../api/subscription.api";
 import { getUserPlaylists, addVideoToPlaylist } from "../api/playlist.api";
+import {
+  getVideoComments,
+  addComment,
+  deleteComment,
+  updateComment,
+} from "../api/comment.api";
 import { useAuth } from "../context/AuthContext";
 
 function Watch() {
@@ -12,11 +18,20 @@ function Watch() {
 
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
+
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribersCount, setSubscribersCount] = useState(0);
+
   const [video, setVideo] = useState(null);
+
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
+
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [commentsLoading, setCommentsLoading] = useState(true);
+  const [commentsError, setCommentsError] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -53,17 +68,26 @@ function Watch() {
     fetchVideo();
   }, [videoId, user]);
 
-  if (loading) {
-    return <p>Loading video...</p>;
-  }
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await getVideoComments(videoId);
 
-  if (error) {
-    return <p>{error}</p>;
-  }
+        console.log("COMMENTS RESPONSE:", response.data);
 
-  if (!video) {
-    return <p>Video not found</p>;
-  }
+        setComments(response.data.data.docs);
+      } catch (error) {
+        console.log("COMMENTS ERROR:", error);
+        console.log("COMMENTS ERROR RESPONSE:", error.response?.data);
+
+        setCommentsError("Failed to load comments");
+      } finally {
+        setCommentsLoading(false);
+      }
+    };
+
+    fetchComments();
+  }, [videoId]);
 
   const handleLike = async () => {
     try {
@@ -112,6 +136,45 @@ function Watch() {
     }
   };
 
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+
+    if (!commentText.trim()) {
+      return;
+    }
+
+    try {
+      const response = await addComment(videoId, {
+        content: commentText,
+      });
+
+      console.log("ADD COMMENT RESPONSE:", response.data);
+
+      const commentsResponse = await getVideoComments(videoId);
+
+      console.log("COMMENTS AFTER ADD:", commentsResponse.data);
+
+      setComments(commentsResponse.data.data.docs);
+
+      setCommentText("");
+    } catch (error) {
+      console.log("ADD COMMENT ERROR:", error);
+      console.log("ADD COMMENT ERROR RESPONSE:", error.response?.data);
+    }
+  };
+
+  if (loading) {
+    return <p>Loading video...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+  if (!video) {
+    return <p>Video not found</p>;
+  }
+
   return (
     <div>
       <video src={video.videoFile.url} controls width="800" />
@@ -156,6 +219,35 @@ function Watch() {
         <button onClick={handleAddToPlaylist} disabled={!selectedPlaylist}>
           Add to Playlist
         </button>
+      </div>
+
+      <h2>Comments</h2>
+
+      <form onSubmit={handleAddComment}>
+        <input
+          type="text"
+          placeholder="Write a comment..."
+          value={commentText}
+          onChange={(e) => setCommentText(e.target.value)}
+        />
+
+        <button type="submit">Comment</button>
+      </form>
+
+      {commentsLoading && <p>Loading comments...</p>}
+
+      {commentsError && <p>{commentsError}</p>}
+
+      <div>
+        {comments.map((comment) => (
+          <div key={comment._id}>
+            <p>
+              <strong>{comment.owner?.username}</strong>
+            </p>
+
+            <p>{comment.content}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
