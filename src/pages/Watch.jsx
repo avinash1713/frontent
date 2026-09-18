@@ -29,6 +29,7 @@ function Watch() {
 
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
+  const [editingComment, setEditingComment] = useState(null);
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [commentsError, setCommentsError] = useState("");
 
@@ -163,6 +164,39 @@ function Watch() {
     }
   };
 
+  const handleEditComment = (comment) => {
+    setEditingComment(comment);
+    setCommentText(comment.content);
+  };
+
+  const handleUpdateComment = async (e) => {
+    e.preventDefault();
+
+    if (!commentText.trim()) {
+      return;
+    }
+
+    try {
+      const response = await updateComment(editingComment._id, {
+        content: commentText,
+      });
+
+      console.log("UPDATE COMMENT RESPONSE:", response.data);
+
+      const commentsResponse = await getVideoComments(videoId);
+
+      console.log("COMMENTS AFTER UPDATE:", commentsResponse.data);
+
+      setComments(commentsResponse.data.data.docs);
+
+      setEditingComment(null);
+      setCommentText("");
+    } catch (error) {
+      console.log("UPDATE COMMENT ERROR:", error);
+      console.log("UPDATE COMMENT ERROR RESPONSE:", error.response?.data);
+    }
+  };
+
   if (loading) {
     return <p>Loading video...</p>;
   }
@@ -223,7 +257,7 @@ function Watch() {
 
       <h2>Comments</h2>
 
-      <form onSubmit={handleAddComment}>
+      <form onSubmit={editingComment ? handleUpdateComment : handleAddComment}>
         <input
           type="text"
           placeholder="Write a comment..."
@@ -231,7 +265,21 @@ function Watch() {
           onChange={(e) => setCommentText(e.target.value)}
         />
 
-        <button type="submit">Comment</button>
+        <button type="submit">
+          {editingComment ? "Update Comment" : "Comment"}
+        </button>
+
+        {editingComment && (
+          <button
+            type="button"
+            onClick={() => {
+              setEditingComment(null);
+              setCommentText("");
+            }}
+          >
+            Cancel
+          </button>
+        )}
       </form>
 
       {commentsLoading && <p>Loading comments...</p>}
@@ -246,6 +294,10 @@ function Watch() {
             </p>
 
             <p>{comment.content}</p>
+
+            {comment.owner?._id?.toString() === user?._id?.toString() && (
+              <button onClick={() => handleEditComment(comment)}>Edit</button>
+            )}
           </div>
         ))}
       </div>
