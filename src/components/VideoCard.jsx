@@ -17,7 +17,7 @@ const VideoCard = ({ video }) => {
 
       <h2>{video.title}</h2>
 
-      <p>By {video.ownerDetails.username}</p>
+      <p>By {video.ownerDetails?.username || video.owner?.username}</p>
 
       <p>{video.views} views</p>
 

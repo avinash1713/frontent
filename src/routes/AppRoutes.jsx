@@ -10,9 +10,10 @@ import Watch from "../pages/Watch.jsx";
 import Channel from "../pages/Channel.jsx";
 import History from "../pages/History.jsx";
 import LikedVideos from "../pages/LikedVideos.jsx";
-import Playlists from "../pages/Playlists.jsx";
-import Playlist from "../pages/Playlist.jsx";
+
 import Dashboard from "../pages/Dashboard.jsx";
+import Playlists from "../pages/PlayLists.jsx";
+import Playlist from "../pages/PlayList.jsx";
 
 function AppRoutes() {
   return (

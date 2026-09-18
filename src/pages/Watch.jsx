@@ -3,10 +3,15 @@ import { Link, useParams } from "react-router-dom";
 import { getVideoById } from "../api/video.api";
 import { toggleVideoLike } from "../api/like.api";
 import { toggleSubscription } from "../api/subscription.api";
+import { getUserPlaylists, addVideoToPlaylist } from "../api/playlist.api";
+import { useAuth } from "../context/AuthContext";
 
 function Watch() {
   const { videoId } = useParams();
+  const { user } = useAuth();
 
+  const [playlists, setPlaylists] = useState([]);
+  const [selectedPlaylist, setSelectedPlaylist] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribersCount, setSubscribersCount] = useState(0);
   const [video, setVideo] = useState(null);
@@ -27,6 +32,14 @@ function Watch() {
         setLikesCount(response.data.data.likesCount);
         setIsSubscribed(response.data.data.owner.isSubscribed);
         setSubscribersCount(response.data.data.owner.subscribersCount);
+
+        if (user?._id) {
+          const playlistsResponse = await getUserPlaylists(user._id);
+
+          console.log("WATCH PLAYLISTS RESPONSE:", playlistsResponse.data);
+
+          setPlaylists(playlistsResponse.data.data);
+        }
       } catch (error) {
         console.log("VIDEO ERROR:", error);
         console.log("VIDEO ERROR RESPONSE:", error.response?.data);
@@ -38,7 +51,7 @@ function Watch() {
     };
 
     fetchVideo();
-  }, [videoId]);
+  }, [videoId, user]);
 
   if (loading) {
     return <p>Loading video...</p>;
@@ -46,6 +59,10 @@ function Watch() {
 
   if (error) {
     return <p>{error}</p>;
+  }
+
+  if (!video) {
+    return <p>Video not found</p>;
   }
 
   const handleLike = async () => {
@@ -82,6 +99,19 @@ function Watch() {
     }
   };
 
+  const handleAddToPlaylist = async () => {
+    try {
+      const response = await addVideoToPlaylist(videoId, selectedPlaylist);
+
+      console.log("ADD TO PLAYLIST RESPONSE:", response.data);
+
+      setSelectedPlaylist("");
+    } catch (error) {
+      console.log("ADD TO PLAYLIST ERROR:", error);
+      console.log("ADD TO PLAYLIST ERROR RESPONSE:", error.response?.data);
+    }
+  };
+
   return (
     <div>
       <video src={video.videoFile.url} controls width="800" />
@@ -108,6 +138,25 @@ function Watch() {
       <button onClick={handleLike}>{isLiked ? "Unlike" : "Like"}</button>
 
       <p>{likesCount} likes</p>
+
+      <div>
+        <select
+          value={selectedPlaylist}
+          onChange={(e) => setSelectedPlaylist(e.target.value)}
+        >
+          <option value="">Select Playlist</option>
+
+          {playlists.map((playlist) => (
+            <option key={playlist._id} value={playlist._id}>
+              {playlist.name}
+            </option>
+          ))}
+        </select>
+
+        <button onClick={handleAddToPlaylist} disabled={!selectedPlaylist}>
+          Add to Playlist
+        </button>
+      </div>
     </div>
   );
 }
