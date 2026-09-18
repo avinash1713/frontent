@@ -14,11 +14,13 @@ import History from "../pages/History.jsx";
 import LikedVideos from "../pages/LikedVideos.jsx";
 
 import Dashboard from "../pages/Dashboard.jsx";
-import Playlists from "../pages/Playlists.jsx";
-import Playlist from "../pages/playlist.jsx";
+// import Playlists from "../pages/Playlists.jsx";
+// import Playlist from "../pages/playlist.jsx";
 
 import Subscriptions from "../pages/Subscriptions.jsx";
 import Settings from "../pages/Settings";
+import Playlist from "../pages/PlayList.jsx";
+import Playlists from "../pages/PlayLists.jsx";
 
 function AppRoutes() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
