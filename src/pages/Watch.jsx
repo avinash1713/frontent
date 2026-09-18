@@ -365,6 +365,7 @@
 
 // export default Watch;
 // src/pages/Watch.jsx
+// src/pages/Watch.jsx
 
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -638,7 +639,7 @@ function Watch() {
   return (
     <div className="mx-auto w-full max-w-6xl">
       {/* ================= VIDEO PLAYER ================= */}
-      <div className="overflow-hidden rounded-xl bg-black">
+      <div className="overflow-hidden rounded-lg bg-black sm:rounded-xl">
         <video
           src={video.videoFile.url}
           controls
@@ -656,11 +657,11 @@ function Watch() {
       </div>
 
       {/* ================= CHANNEL + ACTIONS ================= */}
-      <div className="mt-4 flex flex-col gap-4 border-b border-gray-800 pb-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="mt-4 flex flex-col gap-4 border-b border-gray-800 pb-5 lg:flex-row lg:items-center lg:justify-between">
         {/* Channel */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Avatar */}
-          <div className="h-11 w-11 overflow-hidden rounded-full bg-gray-800">
+          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full bg-gray-800">
             {video.owner?.avatar?.url ? (
               <img
                 src={video.owner.avatar.url}
@@ -675,7 +676,7 @@ function Watch() {
           </div>
 
           {/* Channel Details */}
-          <div>
+          <div className="min-w-0">
             <Link
               to={`/channel/${video.owner.username}`}
               className="font-semibold text-white transition hover:text-[#39FF14]"
@@ -691,7 +692,7 @@ function Watch() {
           {/* Subscribe */}
           <button
             onClick={handleSubscribe}
-            className={`ml-2 rounded-full px-5 py-2 text-sm font-semibold transition ${
+            className={`ml-0 rounded-full px-5 py-2 text-sm font-semibold transition sm:ml-2 ${
               isSubscribed
                 ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
                 : "bg-[#39FF14] text-black hover:bg-[#6AFF4A] hover:shadow-[0_0_12px_#39FF14]"
@@ -702,11 +703,11 @@ function Watch() {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center lg:w-auto">
           {/* Like */}
           <button
             onClick={handleLike}
-            className={`rounded-full px-5 py-2 text-sm font-medium transition ${
+            className={`w-full rounded-full px-5 py-2 text-sm font-medium transition sm:w-auto ${
               isLiked
                 ? "bg-green-950 text-[#39FF14]"
                 : "bg-gray-900 text-gray-300 hover:bg-gray-800"
@@ -716,11 +717,11 @@ function Watch() {
           </button>
 
           {/* Playlist */}
-          <div className="flex overflow-hidden rounded-full bg-gray-900">
+          <div className="flex w-full overflow-hidden rounded-full bg-gray-900 sm:w-auto">
             <select
               value={selectedPlaylist}
               onChange={(e) => setSelectedPlaylist(e.target.value)}
-              className="max-w-[170px] bg-gray-900 px-4 py-2 text-sm text-gray-300 outline-none"
+              className="min-w-0 flex-1 bg-gray-900 px-3 py-2 text-sm text-gray-300 outline-none sm:max-w-[170px] sm:px-4"
             >
               <option value="">Select Playlist</option>
 
@@ -743,8 +744,8 @@ function Watch() {
       </div>
 
       {/* ================= DESCRIPTION ================= */}
-      <div className="mt-4 rounded-xl bg-gray-900 p-4 transition hover:bg-gray-800">
-        <p className="whitespace-pre-wrap text-sm leading-6 text-gray-300">
+      <div className="mt-4 rounded-xl bg-gray-900 p-4 transition hover:bg-gray-800 sm:p-5">
+        <p className="whitespace-pre-wrap break-words text-sm leading-6 text-gray-300">
           {video.description}
         </p>
       </div>
@@ -773,16 +774,16 @@ function Watch() {
             )}
           </div>
 
-          <div className="flex w-full flex-col gap-2 sm:flex-row">
+          <div className="flex w-full min-w-0 flex-col gap-2 sm:flex-row">
             <input
               type="text"
               placeholder="Add a comment..."
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              className="w-full border-b border-gray-700 bg-transparent px-2 py-2 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-[#39FF14]"
+              className="w-full min-w-0 border-b border-gray-700 bg-transparent px-2 py-2 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-[#39FF14]"
             />
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button
                 type="submit"
                 className="rounded-full bg-[#39FF14] px-5 py-2 text-sm font-semibold text-black transition hover:bg-[#6AFF4A]"
@@ -828,7 +829,7 @@ function Watch() {
               </div>
 
               {/* Comment Content */}
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-white">
                   {comment.owner?.username}
                 </p>
@@ -838,7 +839,7 @@ function Watch() {
                 </p>
 
                 {/* Comment Actions */}
-                <div className="mt-2 flex items-center gap-4">
+                <div className="mt-2 flex flex-wrap items-center gap-4">
                   <button
                     onClick={() => handleCommentLike(comment._id)}
                     className={`text-xs transition ${

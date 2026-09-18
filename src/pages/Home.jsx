@@ -1,4 +1,4 @@
-// src/pages/Home.jsx
+// // src/pages/Home.jsx
 
 import { useEffect, useState } from "react";
 import { getAllVideos } from "../api/video.api";
@@ -36,7 +36,7 @@ const Home = () => {
         sortBy: sort,
         sortType: type,
         page: currentPage,
-        limit: 2,
+        limit: 10,
       });
 
       console.log("VIDEOS RESPONSE:", response.data);
@@ -118,7 +118,10 @@ const Home = () => {
       </div>
 
       {/* Search */}
-      <form onSubmit={handleSearch} className="flex w-full max-w-3xl gap-3">
+      <form
+        onSubmit={handleSearch}
+        className="flex w-full max-w-3xl flex-col gap-3 sm:flex-row"
+      >
         <input
           type="text"
           placeholder="Search videos..."
@@ -136,7 +139,7 @@ const Home = () => {
       </form>
 
       {/* Sort */}
-      <div className="mt-5 flex items-center gap-3">
+      <div className="mt-5 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
         <label className="text-sm font-medium text-gray-400">Sort by:</label>
 
         <select

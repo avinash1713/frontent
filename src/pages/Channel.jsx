@@ -216,7 +216,7 @@ function Channel() {
   return (
     <div className="mx-auto w-full max-w-7xl">
       {/* ================= COVER IMAGE ================= */}
-      <div className="relative h-48 overflow-hidden rounded-xl bg-gray-900 sm:h-64 md:h-72">
+      <div className="relative h-40 overflow-hidden rounded-lg bg-gray-900 sm:h-56 sm:rounded-xl md:h-72">
         <img
           src={channel.coverImage}
           alt="Cover"
@@ -224,13 +224,13 @@ function Channel() {
         />
 
         {/* Dark overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
       </div>
 
       {/* ================= CHANNEL INFORMATION ================= */}
-      <div className="relative px-4 sm:px-6">
+      <div className="relative px-2 sm:px-6">
         {/* Avatar */}
-        <div className="-mt-14 h-28 w-28 overflow-hidden rounded-full border-4 border-black bg-gray-900 sm:-mt-16 sm:h-32 sm:w-32">
+        <div className="-mt-12 h-24 w-24 overflow-hidden rounded-full border-4 border-black bg-gray-900 sm:-mt-16 sm:h-32 sm:w-32">
           <img
             src={channel.avatar}
             alt={channel.username}
@@ -240,17 +240,19 @@ function Channel() {
 
         {/* Channel Details */}
         <div className="mt-4 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white sm:text-3xl">
+          <div className="min-w-0">
+            <h1 className="break-words text-2xl font-bold text-white sm:text-3xl">
               {channel.fullName}
             </h1>
 
-            <p className="mt-1 text-sm text-gray-400">@{channel.username}</p>
+            <p className="mt-1 break-words text-sm text-gray-400">
+              @{channel.username}
+            </p>
 
-            <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-gray-400">
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-400">
               <span>{subscribersCount} subscribers</span>
 
-              <span className="text-gray-700">•</span>
+              <span className="hidden text-gray-700 sm:inline">•</span>
 
               <span>{channel.channelsSubscribedToCount} subscriptions</span>
             </div>
@@ -259,7 +261,7 @@ function Channel() {
           {/* Subscribe Button */}
           <button
             onClick={handleSubscribe}
-            className={`w-fit rounded-full px-6 py-3 text-sm font-semibold transition ${
+            className={`w-full rounded-full px-6 py-3 text-sm font-semibold transition sm:w-fit ${
               isSubscribed
                 ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
                 : "bg-[#39FF14] text-black hover:bg-[#6AFF4A] hover:shadow-[0_0_14px_rgba(57,255,20,0.35)]"
@@ -272,12 +274,12 @@ function Channel() {
 
       {/* ================= CHANNEL NAVIGATION ================= */}
       <div className="mt-8 border-b border-gray-800">
-        <div className="flex gap-8 px-4 sm:px-6">
-          <button className="border-b-2 border-[#39FF14] px-1 pb-4 text-sm font-semibold text-[#39FF14]">
+        <div className="flex gap-6 overflow-x-auto px-2 sm:gap-8 sm:px-6">
+          <button className="shrink-0 border-b-2 border-[#39FF14] px-1 pb-4 text-sm font-semibold text-[#39FF14]">
             Videos
           </button>
 
-          <button className="px-1 pb-4 text-sm font-semibold text-gray-500 transition hover:text-white">
+          <button className="shrink-0 px-1 pb-4 text-sm font-semibold text-gray-500 transition hover:text-white">
             About
           </button>
         </div>
@@ -285,14 +287,14 @@ function Channel() {
 
       {/* ================= VIDEOS ================= */}
       <section className="mt-8">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-xl font-bold text-white">Videos</h2>
 
           <span className="text-sm text-gray-500">{videos.length} videos</span>
         </div>
 
         {videos.length === 0 ? (
-          <div className="rounded-xl bg-gray-900 py-16 text-center">
+          <div className="rounded-xl bg-gray-900 px-4 py-16 text-center">
             <p className="text-gray-500">
               This channel hasn't uploaded any videos yet.
             </p>

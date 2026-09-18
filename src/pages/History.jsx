@@ -59,6 +59,8 @@
 
 // export default History;
 
+// src/pages/History.jsx
+
 import { useEffect, useState } from "react";
 import { getWatchHistory } from "../api/auth.api";
 import VideoCard from "../components/VideoCard";
@@ -119,7 +121,7 @@ function History() {
       </div>
 
       {/* ================= HISTORY COUNT ================= */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-xl font-semibold text-white">Your History</h2>
 
         <span className="text-sm text-gray-500">
@@ -129,7 +131,7 @@ function History() {
 
       {/* ================= VIDEOS ================= */}
       {history.length === 0 ? (
-        <div className="rounded-xl bg-gray-900 py-16 text-center">
+        <div className="rounded-xl bg-gray-900 px-4 py-16 text-center">
           <p className="text-gray-500">You haven't watched any videos yet.</p>
         </div>
       ) : (

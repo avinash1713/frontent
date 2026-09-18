@@ -1,5 +1,4 @@
-// src/routes/AppRoutes.jsx
-
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
@@ -16,28 +15,37 @@ import LikedVideos from "../pages/LikedVideos.jsx";
 
 import Dashboard from "../pages/Dashboard.jsx";
 import Playlists from "../pages/Playlists.jsx";
-import Playlist from "../pages/Playlist.jsx";
+import Playlist from "../pages/playlist.jsx";
 
+import Subscriptions from "../pages/Subscriptions.jsx";
 import Settings from "../pages/Settings";
 
 function AppRoutes() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
+
   return (
     <BrowserRouter>
-      <Navbar />
+      <Navbar onMenuClick={toggleSidebar} />
 
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
-      <main className="ml-64 min-h-screen bg-black pt-16 text-white">
-        <div className="p-6">
+      <main className="ml-0 min-h-screen bg-black pt-16 text-white md:ml-64">
+        <div className="p-4 md:p-6">
           <Routes>
-            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/watch/:videoId" element={<Watch />} />
             <Route path="/channel/:username" element={<Channel />} />
 
-            {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/history" element={<History />} />
               <Route path="/liked-videos" element={<LikedVideos />} />
@@ -45,6 +53,7 @@ function AppRoutes() {
               <Route path="/playlist/:playlistId" element={<Playlist />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/subscriptions" element={<Subscriptions />} />
             </Route>
           </Routes>
         </div>
