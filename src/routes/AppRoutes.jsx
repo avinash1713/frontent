@@ -15,6 +15,8 @@ import Dashboard from "../pages/Dashboard.jsx";
 import Playlists from "../pages/PlayLists.jsx";
 import Playlist from "../pages/PlayList.jsx";
 
+import Settings from "../pages/Settings";
+
 function AppRoutes() {
   return (
     <BrowserRouter>
@@ -42,6 +44,8 @@ function AppRoutes() {
           <Route path="/playlist/:playlistId" element={<Playlist />} />
 
           <Route path="/dashboard" element={<Dashboard />} />
+
+          <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
     </BrowserRouter>

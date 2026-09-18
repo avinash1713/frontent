@@ -1,3 +1,5 @@
+// src/context/AuthContext.jsx
+
 import { createContext, useContext, useEffect, useState } from "react";
 
 import {
@@ -5,6 +7,9 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  updateAccountDetails,
+  updateAvatar,
+  updateCoverImage,
 } from "../api/auth.api";
 
 const AuthContext = createContext();
@@ -13,12 +18,10 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is already logged in when the application starts
   useEffect(() => {
     const checkUser = async () => {
       try {
         const response = await getCurrentUser();
-
         setUser(response.data.data);
       } catch (error) {
         setUser(null);
@@ -52,6 +55,30 @@ const AuthProvider = ({ children }) => {
     return response;
   };
 
+  const updateUserAccount = async (data) => {
+    const response = await updateAccountDetails(data);
+
+    setUser(response.data.data);
+
+    return response;
+  };
+
+  const updateUserAvatar = async (formData) => {
+    const response = await updateAvatar(formData);
+
+    setUser(response.data.data);
+
+    return response;
+  };
+
+  const updateUserCoverImage = async (formData) => {
+    const response = await updateCoverImage(formData);
+
+    setUser(response.data.data);
+
+    return response;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -60,6 +87,9 @@ const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+        updateUserAccount,
+        updateUserAvatar,
+        updateUserCoverImage,
       }}
     >
       {children}
@@ -67,8 +97,6 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-const useAuth = () => {
-  return useContext(AuthContext);
-};
+const useAuth = () => useContext(AuthContext);
 
 export { AuthProvider, useAuth };
