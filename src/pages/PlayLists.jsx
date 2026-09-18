@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { createPlaylist, getUserPlaylists } from "../api/playlist.api";
+import {
+  createPlaylist,
+  getUserPlaylists,
+  updatePlaylist,
+} from "../api/playlist.api";
 
 function Playlists() {
   const { user } = useAuth();
 
+  const [editingPlaylist, setEditingPlaylist] = useState(null);
   const [playlists, setPlaylists] = useState([]);
   const [playlistData, setPlaylistData] = useState({
     name: "",
@@ -46,6 +51,47 @@ function Playlists() {
     });
   };
 
+  const handleEdit = (playlist) => {
+    setEditingPlaylist(playlist);
+
+    setPlaylistData({
+      name: playlist.name,
+      description: playlist.description,
+    });
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await updatePlaylist(editingPlaylist._id, playlistData);
+
+      console.log("UPDATE PLAYLIST RESPONSE:", response.data);
+
+      setPlaylists((prev) =>
+        prev.map((playlist) =>
+          playlist._id === editingPlaylist._id
+            ? {
+                ...playlist,
+                name: response.data.data.name,
+                description: response.data.data.description,
+              }
+            : playlist,
+        ),
+      );
+
+      setEditingPlaylist(null);
+
+      setPlaylistData({
+        name: "",
+        description: "",
+      });
+    } catch (error) {
+      console.log("UPDATE PLAYLIST ERROR:", error);
+      console.log("UPDATE PLAYLIST ERROR RESPONSE:", error.response?.data);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -84,7 +130,8 @@ function Playlists() {
     <div>
       <h1>My Playlists</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={editingPlaylist ? handleUpdate : handleSubmit}>
+        {" "}
         <div>
           <label>Name</label>
 
@@ -96,7 +143,6 @@ function Playlists() {
             required
           />
         </div>
-
         <div>
           <label>Description</label>
 
@@ -107,8 +153,23 @@ function Playlists() {
             required
           />
         </div>
-
-        <button type="submit">Create Playlist</button>
+        <button type="submit">
+          {editingPlaylist ? "Update Playlist" : "Create Playlist"}
+        </button>
+        {editingPlaylist && (
+          <button
+            type="button"
+            onClick={() => {
+              setEditingPlaylist(null);
+              setPlaylistData({
+                name: "",
+                description: "",
+              });
+            }}
+          >
+            Cancel
+          </button>
+        )}
       </form>
 
       <p>{playlists.length} playlists</p>
@@ -125,6 +186,7 @@ function Playlists() {
             <p>{playlist.totalVideos} videos</p>
 
             <p>{playlist.totalViews} views</p>
+            <button onClick={() => handleEdit(playlist)}>Edit</button>
           </div>
         ))}
       </div>
