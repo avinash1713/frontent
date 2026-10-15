@@ -74,8 +74,8 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Sidebar = ({ isOpen, onClose }) => {
-  console.log("SIDEBAR USER:", user);
   const { user } = useAuth();
+  console.log("SIDEBAR USER:", user);
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -123,7 +123,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           ))}
 
           {/* My Channel */}
-          {user && (
+          {user?.username && (
             <NavLink
               to={`/channel/${user.username}`}
               onClick={onClose}

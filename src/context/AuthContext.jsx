@@ -36,7 +36,7 @@ const AuthProvider = ({ children }) => {
   const login = async (data) => {
     const response = await loginUser(data);
 
-    setUser(response.data.data);
+    setUser(response.data.data.user);
 
     return response;
   };
